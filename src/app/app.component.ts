@@ -132,6 +132,9 @@ export class AppComponent implements OnInit {
         case 'IMPORT_FILE':
           this.environmentsService.importEnvironmentsFile();
           break;
+        case 'IMPORT_FILE_URL':
+          this.environmentsService.importEnvironmentsUrl();
+          break;
         case 'IMPORT_CLIPBOARD':
           this.environmentsService.importFromClipboard();
           break;

@@ -225,6 +225,11 @@ function createWindow() {
           mainWindow.webContents.send('keydown', { action: 'IMPORT_FILE' });
         }
       },
+      {
+        label: 'Import all environments from URL', click: function () {
+          mainWindow.webContents.send('keydown', { action: 'IMPORT_FILE_URL' });
+        }
+      },
       { type: 'separator' },
       {
         label: 'Export all environments', click: function () {

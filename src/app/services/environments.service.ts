@@ -495,6 +495,68 @@ export class EnvironmentsService {
    *
    * Append imported envs to the env array.
    */
+  public importEnvironmentsUrl() {
+    const url = this.store.get('settings').environmentUrl;
+    console.log('import url:', url);
+    fetch(url)
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((importData) => {
+        if (!this.dataService.verifyImportChecksum(importData)) {
+          this.toastService.addToast('error', Errors.IMPORT_FILE_WRONG_CHECKSUM);
+          return;
+        }
+
+        // verify version compatibility
+        if (importData.appVersion !== appVersion) {
+          this.toastService.addToast('error', Errors.IMPORT_WRONG_VERSION);
+          return;
+        }
+
+        importData.data = this.renewUUIDs(importData.data as EnvironmentsType, 'full');
+        (importData.data as EnvironmentsType).forEach(environment => {
+          this.store.update({ type: 'ADD_ENVIRONMENT', item: environment });
+        });
+      });
+    // this.dialog.showOpenDialog(this.BrowserWindow.getFocusedWindow(), { filters: [{ name: 'JSON', extensions: ['json'] }] }, (file) => {
+    //   if (file && file[0]) {
+    //     fs.readFile(file[0], 'utf-8', (error, fileContent) => {
+    //       if (error) {
+    //         this.toastService.addToast('error', Errors.IMPORT_ERROR);
+    //       } else {
+    //         const importData: ExportType = JSON.parse(fileContent);
+    //
+    //         // verify data checksum
+    //         if (!this.dataService.verifyImportChecksum(importData)) {
+    //           this.toastService.addToast('error', Errors.IMPORT_FILE_WRONG_CHECKSUM);
+    //           return;
+    //         }
+    //
+    //         // verify version compatibility
+    //         if (importData.appVersion !== appVersion) {
+    //           this.toastService.addToast('error', Errors.IMPORT_WRONG_VERSION);
+    //           return;
+    //         }
+    //
+    //         importData.data = this.renewUUIDs(importData.data as EnvironmentsType, 'full');
+    //         (importData.data as EnvironmentsType).forEach(environment => {
+    //           this.store.update({ type: 'ADD_ENVIRONMENT', item: environment });
+    //         });
+    //
+    //         this.eventsService.analyticsEvents.next(AnalyticsEvents.IMPORT_FILE);
+    //       }
+    //     });
+    //   }
+    // });
+  }
+
+  /**
+   * Import a json environments file in Mockoon's format.
+   * Verify checksum and migrate data.
+   *
+   * Append imported envs to the env array.
+   */
   public importEnvironmentsFile() {
     this.dialog.showOpenDialog(this.BrowserWindow.getFocusedWindow(), { filters: [{ name: 'JSON', extensions: ['json'] }] }, (file) => {
       if (file && file[0]) {

@@ -9,6 +9,7 @@ export type SettingsType = {
   analytics: boolean;
   lastMigration: number;
   bannerDismissed: string[];
+  environmentUrl: string;
 };
 
 @Injectable()
@@ -17,7 +18,8 @@ export class SettingsService {
     welcomeShown: false,
     analytics: true,
     lastMigration: 0,
-    bannerDismissed: []
+    bannerDismissed: [],
+    environmentUrl: ''
   };
   private storageKey = 'settings';
 
